@@ -1,0 +1,28 @@
+---
+title: "League Stats"
+output: pdf_document
+---
+##Libraries
+```{r}
+library(httr)
+library(jsonlite)
+require(riotR)
+library(request)
+library(stringr)
+source("riot_api.R")
+```
+
+
+##Try with RiotR
+```{r}
+# get_riot_data(friends_names)
+get_riot_data("onion%20head")
+get_riot_data("jam%20cham")
+get_riot_data("Howeyourfelling")
+get_riot_data("Chatmo")
+get_riot_data("Duckyyy")
+get_riot_data("b0styjusty")
+get_riot_data("jrjrsbrother")
+get_riot_data("Aurum%20Potestas")
+
+```
