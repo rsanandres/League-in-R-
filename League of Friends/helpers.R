@@ -4,10 +4,13 @@ library(DT)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(ggplot2)
+library(dplyr)
 
 load("raph_match_history_data.RData")
 load("friends_stats.RData")
 load("friends_stats_df.csv")
+load("game_stats.csv")
+model_df <- read.csv("model_df.csv")
 
 fs_df <- as.data.frame(t(friends_stats_df))
 #Code

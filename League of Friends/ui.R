@@ -21,8 +21,9 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem("Table Form", tabName = "Table", icon = icon("glyphicon glyphicon-th", lib = "glyphicon")),
     menuItem("Per Person", tabName = "pp",icon = icon("glyphicon glyphicon-user", lib = "glyphicon")),
-    menuItem("Comparison", tabName = "Comparison",icon = icon("glyphicon glyphicon-eye-open", lib = "glyphicon"))
-  )
+    menuItem("Comparison", tabName = "Comparison",icon = icon("glyphicon glyphicon-eye-open", lib = "glyphicon")),
+    menuItem("Raph_Score", tabName = "Raph_Score",icon = icon("glyphicon glyphicon-remove-sign", lib = "glyphicon"))
+    )
 )
 
 body <- dashboardBody(
@@ -61,10 +62,19 @@ body <- dashboardBody(
     tabItem(tabName = "Comparison",
             h2("Comparison"),
             fluidPage(
-              selectInput("p1","Name 1",choices = friends_names, selected = "onion head"),
-              selectInput("p2",'Name 2',choices = friends_names, selected = "jam cham"),
+              # selectInput("p1","Name 1",choices = friends_names, selected = "onion head"),
+              # selectInput("p2",'Name 2',choices = friends_names, selected = "jam cham"),
               selectInput("stat_comp", h5("Choose the statistic"),choices = choices, selected = 1),
               plotOutput("Hist_Full")
+            )
+    ),
+    tabItem(tabName = "Raph_Score",
+            h2("Raph_Score"),
+            textOutput("raph_score_text"),
+            fluidPage(
+              selectInput("game", h5("Choose the Game Number"),
+                          choices = 1:(length(rownames(model_df))/10), selected = 1),
+              plotOutput("Hist_Raph")
             )
     )
   )

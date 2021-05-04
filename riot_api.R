@@ -175,7 +175,6 @@ update_stats <- function(){
     if(!(is.null(match_history[[ind]]))){
       if(match_history[[ind]]$gameMode == 'CLASSIC'){
         temp1 <- as.data.frame(match_history[[ind]])
-        print("Hello")
         if (length(temp1) == 1379){
           temp <- rbind(temp, temp1)
         }
@@ -183,6 +182,76 @@ update_stats <- function(){
     }
   }
   save(temp,file = "game_stats.csv")
+}
+
+
+#gets the data per participant and win
+get_model_df <- function(){
+  temp <- match_history[[2]]$participants[[1]]
+  temp$perks <- NULL
+  temp <- as.data.frame(temp)
+  temp <- temp[-c(1),]
+  for(ind in seq(2,length(match_history), 2)){
+    if(!(is.null(match_history[[ind]]))){
+      if(match_history[[ind]]$gameMode == 'CLASSIC'){
+        for(i in 1:10){
+          temp1 <- match_history[[ind]]$participants[[i]]
+          temp1$perks <- NULL
+          temp1 <- as.data.frame(temp1)
+          if(identical(sort(names(temp)), sort(names(temp1)))){
+            temp <- rbind(temp, temp1)
+          }
+          print(nrow(temp))
+        }
+        
+      }
+    }
+  }
+  write.csv(model_df, "model_df.csv")
+}
+
+add_raph_score <- function(){
+  model_df <- read.csv("model_df.csv")
+  
+  stats_removed <- c("X.1", "X", "championId", "championName", "championTransform", "gameEndedInEarlySurrender", "gameEndedInSurrender","individualPosition",
+                     "item0","item1","item2" ,"item3","item4","item5","item6","itemsPurchased", "lane", "nexusKills","nexusLost", "participantId",
+                     "profileIcon",
+                     "puuid", "riotIdName","riotIdTagline","role","spell1Casts","spell2Casts","spell3Casts","spell4Casts","summoner1Casts","summoner1Id"
+                     ,"summoner2Casts","summoner2Id","summonerId","summonerLevel","summonerName",
+                     "teamEarlySurrendered","teamId","teamPosition","timePlayed", "win", "raph_score")
+  
+  df <- model_df[!colnames(model_df) %in% stats_removed]
+  ## this is really inflated for the right side
+  weights <- c(1, 1, 1, 1/10000, 
+               1/13, 1/8, 1/4000, 1/2000,
+               1/4000, 1/20000, -1, 0.2,
+               1, 0.2, 1, 1,
+               1, 1, 1/15000, 1/10000,
+               1, -1, 1, 1,
+               1/1000, 1, 1, 1/120,
+               1/30000, 1/5000, 1/5000, 1/15,
+               1, 1, 3, 1/30000,
+               1/5000, 1/5000, 2.5, 1/3,
+               1/20, 0, 0, 1/500,
+               1/20000, 1/7000, 1/1000, 1/85,
+               1/223, -1/60, 1/4, 2, 
+               1/30000, 1/5000, 1/5000, 1/2,
+               -1/2, 1, 1/20, 1/3, 
+               0.45, 1/7)
+  
+  
+  score <- integer(length(rownames(df)))
+  df$raph_score <- score
+  for(i in 1:length(rownames(df))){
+    df[i,] <- weights * df[i,]
+    df[i, "raph_score"] <- ((sum(df[i,])/55)+0.15)*5
+  }
+  model_df$raph_score <- df$raph_score
+  model_df['X'] <- NULL
+  model_df['X.1'] <- NULL
+  write.csv(model_df, "model_df.csv")
+  print(colnames(model_df))
+  return(model_df)
 }
 
 stats_to_df <- function(){
@@ -195,3 +264,4 @@ stats_to_df <- function(){
   friends_stats_df = t(friends_stats_df)
   save(friends_stats_df, file = "friends_stats_df.csv")
 }
+

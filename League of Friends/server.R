@@ -11,6 +11,24 @@ server <- function(input, output) {
     input$stat_comp
   })
   
+  stat_dat <- reactive({
+    input$stat
+  })
+  
+  stat_game <- reactive({
+    input$game
+  })
+  output$raph_score_text <- renderText({
+    lower <- (as.numeric(stat_game())-1)* 10 + 1
+    upper <- lower + 9
+    temp <- model_df[lower:upper,]
+    for (i in lower:upper){
+      name <- model_df[i,]$summonerName
+      raph_score <- model_df[i,]$raph_score
+      paste(name, "has a Raph Score of", raph_score, "\n")
+    }
+  }) 
+  
   output$chosen_stat <- renderText({
     paste("Currently, ",input$friend, " has ",
           friends_stats[[input$friend]][[input$stat]] ," ", input$stat)
@@ -25,6 +43,16 @@ server <- function(input, output) {
       geom_bar(stat = "identity") + scale_y_discrete()
     
   })
+  output$Hist_Raph <- renderPlot({
+    lower <- (as.numeric(stat_game())-1)* 10 + 1
+    upper <- lower + 9
+    ggplot(model_df[lower:upper, ], aes_string(x = 'summonerName', y = 'raph_score',fill='summonerName')) +
+      geom_bar(stat = "identity") + scale_y_discrete() + 
+      geom_text(aes(label = paste("Raph Score:",round(raph_score, digits = 2))), vjust = -1) +
+      scale_x_discrete(limits = model_df[lower:upper, ]$summonerName)
+  
+  })
+  
   
   observeEvent(input$rows,{
     rows <- as.numeric(input$rows)

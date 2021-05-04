@@ -5,7 +5,7 @@ account: rsanandres
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4055463
-bundleId: 4539379
+bundleId: 4545868
 url: https://rsanandres.shinyapps.io/league_of_friends/
-when: 1619782153.40944
-lastSyncTime: 1619782153.40944
+when: 1619943597.13794
+lastSyncTime: 1619943597.13794
